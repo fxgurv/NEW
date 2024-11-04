@@ -53,7 +53,7 @@ WIDTH = 900
 HEIGHT = 1400
 WIDTH,HEIGHT = a_.size
 
-should load from files and build new from file
+# should load from files and build new from file
 cookie_fns = ["Douyin Beijing Personnel Examination","Douyin Guangdong Personnel Examination","Douyin Sichuan Personnel Examination","Douyin Zhejiang Personnel Examination","Douyin Jiangsu Personnel Examination","Douyin Shandong Personnel Examination","Douyin Henan Personnel Examination"]
 cookie_fns = os.listdir("./cookie_list/")
 cookie_fn = cookie_fns[0]
