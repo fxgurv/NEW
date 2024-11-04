@@ -1,0 +1,2 @@
+template_img,font_title,sz1,title_x,title_y,color1,font_subtt,sz2,subtt_x,subtt_y,color2,font_txt,sz3,txt_x,color3,bac_color
+./templates/专有.png,fonts/特创易新恒LOGO美黑.ttf,100,100,320,white,fonts/吉页颉润体简.ttf,55,100,780,white,./fonts/方正黑体.ttf,80,100,white,orange

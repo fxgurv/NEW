@@ -1,0 +1,2 @@
+template_img,font_title,sz1,title_x,title_y,color1,font_subtt,sz2,subtt_x,subtt_y,color2,font_txt,sz3,txt_x,color3,bac_color
+templates/zf_board_temp.jpeg,fonts/特创易新恒LOGO美黑.ttf,80,60,320,white,fonts/吉页颉润体简.ttf,55,80,780,#007000,fonts/simsun.ttc,40,80,white,white
