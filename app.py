@@ -7,12 +7,12 @@ import textwrap
 
 import traceback
 
-# 爬虫-------------
+# Crawler-------------
 # from save_cookie import save_cookie, get_cookie, cookie_f
 # from scrap_util import getDriver, titleLocInfo, find_key_paragrap, extract_from_driver, table_record_doc
 import helium as hm
 # from postDouyin import senDouyin
-# 模型-------------
+# Model-------------
 from transformers import *
 
 import pandas as pd
@@ -20,19 +20,19 @@ import os
 import random
 # import IPython.display as ipd
 import numpy as np
-# 视频-------------
+# Video-------------
 import moviepy.video.io.ImageSequenceClip
 from moviepy.editor import AudioFileClip,TextClip,CompositeVideoClip
 
 import inspect, math
 from PIL import Image, ImageDraw, ImageFont
 from txtImgPost import  myPost, reshape_texts, generatePost
-# 发布-------------
+# Publish-------------
 
 
-VIPtitle = "👑潜龙在渊输入内容生成视频✍️👒"
-print(f">>>{VIPtitle}")
-# print(f"秘钥文件路径:{cookie_f}")
+VIPtitle = "👑Content Input to Video Generation✍️👒"
+print(f"&gt;&gt;&gt;{VIPtitle}")
+# print(f"Secret Key File Path:{cookie_f}")
 mv_path = "./movie_output"
 img_path = "./imgpost"
 font_path = "./fonts"
@@ -43,7 +43,7 @@ templates_path = "./templates/"
 templates = [os.path.join(templates_path,i) for i in os.listdir(templates_path) if i.endswith("csv")]
 templates_name = [i.strip(templates_path).strip(".csv") for i in templates]
 preview_templates = [os.path.join(templates_path,i) for i in os.listdir(templates_path) if i.endswith("jpg")]
-# 字体------
+# Font------
 font_list = [os.path.join(font_path,i) for i in os.listdir(font_path) if i.split(".")[1] in ["ttc",  "ttf", "otf"]]
 background_img = "kaobianBottem.jpeg"
 background_img = "./templates/zf_board_temp.jpeg"
@@ -54,29 +54,28 @@ HEIGHT = 1400
 WIDTH,HEIGHT = a_.size
 
 # should load from files and build new from file
-# cookie_fns = ["抖音北京人事考试","抖音广东人事考试","抖音四川人事考试","抖音浙江人事考试","抖音江苏人事考试","抖音山东人事考试","抖音河南人事考试"]
+# cookie_fns = ["Douyin Beijing Personnel Examination","Douyin Guangdong Personnel Examination","Douyin Sichuan Personnel Examination","Douyin Zhejiang Personnel Examination","Douyin Jiangsu Personnel Examination","Douyin Shandong Personnel Examination","Douyin Henan Personnel Examination"]
 # cookie_fns = os.listdir("./cookie_list/")
 # cookie_fn = cookie_fns[0]
-description = "URL--> 爬取-->解析--> 音频--> 图片--> 视频"
+description = "URL--&gt; Crawl--&gt;Parse--&gt; Audio--&gt; Image--&gt; Video"
 
 # driver = getDriver()
 # sub_url ="https://www.js.msa.gov.cn/art/2023/2/24/art_11436_1391666.html"
-# hm.set_driver(driver)  # 给它一个selnuim driver
+# hm.set_driver(driver)  # Give it a selnuim driver
 # hm.go_to(sub_url)
 # html = driver.page_source
-html = "<None>"
+html = ""
 
 examples = [
-    ["朝天区2023年上半年面向社会公开考试招聘事业单位工作人员公告-“四川•朝天”门户网",
-     "报名时间。本次公开考试招聘采取网络报名方式进行，不组织现场报名。报名时间：2023年3月10日至3月17日24:00。报名网站：广元人事考试网（http://gypta.e21cn.com/）",
-     "缴费时间。2023年05月27日 在 网上缴费",
-     "考试时间-笔试时间  2.笔试分别于2023年4月8日、9日举行（具体时间、地点见《准考证》）。\
-其中，4月8日笔试科目为《教育公共基础》，4月9日笔试科目为《卫生专业技术岗位人员公共科目笔试》、《综合知识》",
-     "准考证领取。网上报名且缴费成功的报考者，凭身份证号、姓名，于2023年4月3日至4月7日24:00前登录报名网站打印准考证"
+    ["Chaoyang District 2023 First Half of the Year Public Examination and Recruitment of Personnel for Public Institutions Announcement - \"Sichuan•Chaoyang\" Portal",
+     "Registration Time. This public examination and recruitment will be conducted through online registration and no on-site registration will be organized. Registration time: March 10, 2023 to March 17, 2023, 24:00. Registration Website: Guangyuan Personnel Examination Website (http://gypta.e21cn.com/)",
+     "Payment Time. May 27, 2023, Online Payment",
+     "Examination Time - Written Examination Time 2. The written examinations will be held on April 8 and 9, 2023 (specific time and location are subject to the Admission Ticket). Among them, the subject of the written examination on April 8 is \"Education Public Foundation\", and the subjects of the written examination on April 9 are \"Public Subject Written Examination for Health Professional and Technical Personnel\" and \"Comprehensive Knowledge\"",
+     "Admission Ticket Collection. Candidates who have successfully registered and paid online can print their admission ticket by logging into the registration website before 24:00 on April 3 to April 7, 2023, using their ID number and name"
     ],
     ]
 
-# 预测函数
+# Prediction function
 # qa = pipeline("question-answering", model="uer/roberta-base-chinese-extractive-qa")
 def custom_predict(context, question):
     answer_result = qa(context=context, question=question)
@@ -100,8 +99,8 @@ def image_preview(orimage=None, text="Hello Ai", x=10, y=20, w=500, h=100, bac_c
     draw.text((text_x, text_y), text, font=font, fill=txt_color)
     return image
 
-# 位置暂时由系统决定
-def generate_image(bac_img, title,a,b,c,d,e,f,   #-- 当前文本行内字数可调，宽度可调 words_curline or 文本宽度
+# Location temporarily determined by the system
+def generate_image(bac_img, title,a,b,c,d,e,f,   #-- Current number of characters in the text line can be adjusted, width can be adjusted words_curline or text width
                    font_title, sz1, title_x, title_y, color1,   # for title
                    font_subtt, sz2, subtt_x, subtt_y, color2,
                    font_txt,   sz3, txt_x,  color3, bac_color):
@@ -117,11 +116,11 @@ def generate_image(bac_img, title,a,b,c,d,e,f,   #-- 当前文本行内字数可
     postcard=myPost(front_img=front_img, img = bac_img)
     width, height = postcard.get_width_height()
     print(f"width, height :{width}  {height}")
-    #  前景图， 待开放参数控制
+    #  Foreground image, parameters to be opened for control
     # postcard.drawFrontground() 
-    # 放置标题  + 字体字号
+    # Place the title  + font size
     spacing=20
-    # --理想总行字数
+    # --Ideal total number of characters per line
     words, rows = postcard.getLinesCount(sz=sz1, spacing=spacing) 
     words = (width - title_x) / ( sz1 + spacing) 
     words = int(words) + 1
@@ -133,10 +132,10 @@ def generate_image(bac_img, title,a,b,c,d,e,f,   #-- 当前文本行内字数可
                      y=title_y, color = color1, spacing=spacing,  ali = "center",
                          bac_color=None)
 
-    # 子标题 + 内容的处理  + 每行字数
+    # Subtitle + content processing  + number of characters per line
     # x=40
-    y = subtt_y  #  标题与剩下内容高度
-    #- -- 扣除起始位置 能放字数 ---
+    y = subtt_y  #  Title and remaining content height
+    #- -- Deduct the starting position, the number of characters that can be placed ---
     words = int((width) / sz3)
     for k,contents in enumerate([a,b,c,d,e,f]):
         if len(contents) < 1:
@@ -149,7 +148,7 @@ def generate_image(bac_img, title,a,b,c,d,e,f,   #-- 当前文本行内字数可
         words = int((width - txt_x) / sz3) - 2
         sub_text = textwrap.wrap(sub_texts, width=words)
         # sub_text = [i.center(words) for i in sub_text]
-        # -----文本框效果--------
+        # -----Text box effect--------
         # draw.rectangle((x, y, x + w, y + h), fill=bac_color)
         postcard.postBoxText([sub_title], font=font_subtt, sz = sz2,
                       x=subtt_x, y=y, color = color2, spacing=spacing,
@@ -166,18 +165,18 @@ def generate_template( pre_img, input_image,  mt_name,
                    font_subtt, sz2, subtt_x, subtt_y, color2,
                    font_txt,   sz3, txt_x,  color3, bac_color):
     if pre_img is None:
-        print("没调试好，不能保存")
+        print("Not debugged well, cannot save")
         return None
     if type(pre_img) is np.ndarray:
         template_img = f"./templates/{mt_name}.png"
         template_img_preview = f"./templates/{mt_name}.jpg"
-        print("保存图片", template_img)
+        print("Saving image", template_img)
         pil = Image.fromarray(input_image)
         pil_2 = Image.fromarray(pre_img)
         pil_2.save(template_img_preview)
         pil.save(template_img)
-    print("开始保存模板")
-    # 保存模板预览效果
+    print("Start saving template")
+    # Save template preview effect
     template_name = f"./templates/{mt_name}.csv"
     name = ["template_img","font_title", "sz1", "title_x", "title_y", "color1",
         "font_subtt", "sz2", "subtt_x", "subtt_y", "color2",
@@ -193,7 +192,7 @@ def load_template(mt_name):
     template_name = f"./templates/{mt_name}.csv"
     template_img = f"./templates/{mt_name}.png"
     if not os.path.exists(template_name):
-        print("error on dealing this template name :", mt_name)
+        print("Error on dealing this template name :", mt_name)
         return None
     template_df = pd.read_csv(template_name)
     # print(template_df)
@@ -206,7 +205,7 @@ def load_template(mt_name):
     return res
    
 # def change_textbox(choice):
-#     #根据不同输入对输出控件进行更新
+#     #Update the output control based on different inputs
 #     if choice == "short":
 #         return gr.update(lines=2, visible=True, value="Short story: ")
 #     elif choice == "long":
@@ -250,7 +249,7 @@ def generate_mv(bac_img, title, a,b,c,d,e,f, sz1, sz2, sz3, spacing, color1, col
     for k,lines in enumerate([title,a,b,c,d]):
         k = key_index[k]
         if not lines:
-            # 这个关键信息没有，跳过
+            # This key information is missing, skip
             continue
         if len(lines) < 2:
             continue
@@ -258,14 +257,14 @@ def generate_mv(bac_img, title, a,b,c,d,e,f, sz1, sz2, sz3, spacing, color1, col
         filename = f"{k}_{new_title}.png"
         filename = os.path.join(imge_dir, filename)
         img_files.append(filename)
-        # --- how long a image last display
+        # --- How long a image last display
         for i in range(image_dur):   
             mv_image_files.append(filename)
         img = generatePost(lines=lines,front_img = front_img, bac_img = bac_img, fn_name = filename)
 
     # clip_img = moviepy.video.io.ImageSequenceClip.ImageSequenceClip(img_files, fps=fps) #durations=audio_file.duration ) #
     if len(img_files) < 1:
-        print("error, this url not get a valid key info:{new_title},url:{url_}")
+        print("Error, this url did not get a valid key info:{new_title}")
         return "","",""
     clip_img = moviepy.video.io.ImageSequenceClip.ImageSequenceClip(mv_image_files, fps=fps, durations=audio_file.duration ) #
     clip_img = clip_img.set_audio(audio_file)
@@ -286,16 +285,16 @@ def exit_func():
 #     templates_name = [i.strip(templates_path).strip(".csv") for i in templates]
 #     return templates_name
     
-# 登录抖音
+# Login Douyin
 def loginDouyin():
     url = 'https://creator.douyin.com/'
-    hm.set_driver(driver)  # 给它一个selnuim driver
+    hm.set_driver(driver)  # Give it a selnuim driver
     hm.go_to(url)
     # driver.get_screenshot_as_file("1.png")
-    print("-------------------请扫描二维码登录抖音创作者中心-------------------")
-    hm.click(hm.Text("登录"))
+    print("-------------------Please scan the QR code to log in to the Douyin Creator Center-------------------")
+    hm.click(hm.Text("Log In"))
     time.sleep(1)
-    hm.click(hm.Text("确认"))
+    hm.click(hm.Text("Confirm"))
     time.sleep(1)
     qr_element = driver.find_element_by_class_name("qrcode-image")
     qr_element.click()
@@ -311,94 +310,94 @@ def run_save_cookie(account_name):
 
 input_image_, font_title_, sz1_, title_x_, title_y_, color1_, \
     font_subtt_, sz2_, subtt_x_, subtt_y_, color2_, \
-    font_txt_,   sz3_, txt_x_,  color3_, bac_color_ = load_template("专有")
-# 构建Blocks上下文 =======================================================================
+    font_txt_,   sz3_, txt_x_,  color3_, bac_color_ = load_template("Dedicated")
+# Build Blocks context =======================================================================
 with gr.Blocks() as demo:
     with gr.Tabs():
         # --------------generate movie -------------      
-        with gr.TabItem("生成 & 预览"):
+        with gr.TabItem("Generate & Preview"):
             gr.Markdown(f"# {VIPtitle}")
             gr.Markdown(f"{description}")
-            with gr.Row():       # 行排列        
-                with gr.Column():    # 列排列
-                    title = gr.Textbox("朝天区2023 事业单位 公告",label="标题",interactive=True)
-                    a = gr.Textbox("标题1。内容",label="a")
-                    b = gr.Textbox(lines=2, value = "报名时间。2023年3月10日至3月17日24:00。", label="b",interactive=True)
-                    c = gr.Textbox(lines=2, value = "子标题1。笔试分别于2023年4月8日", label="c",interactive=True)
+            with gr.Row():       # Row arrangement        
+                with gr.Column():    # Column arrangement
+                    title = gr.Textbox("Chaoyang District 2023 Public Institution Announcement",label="Title",interactive=True)
+                    a = gr.Textbox("Title 1. Content",label="a")
+                    b = gr.Textbox(lines=2, value = "Registration Time. March 10, 2023 to March 17, 2023, 24:00.", label="b",interactive=True)
+                    c = gr.Textbox(lines=2, value = "Subtitle 1. Written Examination will be held on April 8, 2023", label="c",interactive=True)
                     d = gr.Textbox(lines=2, value = " ", label="d",interactive=True)
                     e = gr.Textbox(lines=2, value = " ", label="e",interactive=True)
                     f = gr.Textbox(lines=2, value =  " ", label="f",interactive=True)
                     
                 # movie_file = gr.Video(exam_video,label="movie")
                 with gr.Column():
-                    # -- 输入背景图底图 作为画布 --
-                    input_image = gr.Image(input_image_, label = "背景图， input",interactive=True)
-                    title_x = gr.Slider(1, WIDTH, label = "标题左右移动", value=title_x_, step = 5)
-                    title_y = gr.Slider(1, HEIGHT, label = "标题上下移动", value=title_y_, step = 5)
-                    font_title = gr.Dropdown(choices = font_list, label = "标题字体", 
+                    # -- Input background image as canvas --
+                    input_image = gr.Image(input_image_, label = "Background Image Input",interactive=True)
+                    title_x = gr.Slider(1, WIDTH, label = "Title Horizontal Movement", value=title_x_, step = 5)
+                    title_y = gr.Slider(1, HEIGHT, label = "Title Vertical Movement", value=title_y_, step = 5)
+                    font_title = gr.Dropdown(choices = font_list, label = "Title Font", 
                                     value = font_title_)
-                    sz1 = gr.Slider(1, 100, label = "标题大小", value=sz1_, step = 5)
-                    color1 = gr.Textbox(color1_, label = "标题颜色")
-                    bac_color = gr.Textbox(bac_color_, label = "文本框颜色 空不设置文本框")
+                    sz1 = gr.Slider(1, 100, label = "Title Size", value=sz1_, step = 5)
+                    color1 = gr.Textbox(color1_, label = "Title Color")
+                    bac_color = gr.Textbox(bac_color_, label = "Text Box Color (leave blank for no box)")
 
                 with gr.Column():
-                    # -- 子标题
-                    font_subtt = gr.Dropdown(choices = font_list, label = "子标题字体", value = font_subtt_)
-                    sz2 = gr.Slider(1, 100, label = "subTitleSZ", value=sz2_, step = 5)
-                    subtt_x = gr.Slider(1, WIDTH, label = "子标题左右-->", value=subtt_x_, step = 5)
-                    subtt_y = gr.Slider(1, HEIGHT, label = "子标题 上下 ^  v", value=subtt_y_, step = 5)
-                    color2 = gr.Textbox(color2_, label = "子标题颜色")
-                    font_txt = gr.Dropdown(choices = font_list, label = "文本字体", value = font_txt_)
-                    sz3 = gr.Slider(1, 100, label = "wordSize", value=sz3_, step = 5)
-                    txt_x = gr.Slider(1, WIDTH, label = "内容位置_x", value=txt_x_, step = 5)
-                    color3 = gr.Textbox(color3_, label = "文字颜色")
+                    # -- Subtitle
+                    font_subtt = gr.Dropdown(choices = font_list, label = "Subtitle Font", value = font_subtt_)
+                    sz2 = gr.Slider(1, 100, label = "Subtitle Size", value=sz2_, step = 5)
+                    subtt_x = gr.Slider(1, WIDTH, label = "Subtitle Horizontal Movement", value=subtt_x_, step = 5)
+                    subtt_y = gr.Slider(1, HEIGHT, label = "Subtitle Vertical Movement", value=subtt_y_, step = 5)
+                    color2 = gr.Textbox(color2_, label = "Subtitle Color")
+                    font_txt = gr.Dropdown(choices = font_list, label = "Text Font", value = font_txt_)
+                    sz3 = gr.Slider(1, 100, label = "Text Size", value=sz3_, step = 5)
+                    txt_x = gr.Slider(1, WIDTH, label = "Content Position X", value=txt_x_, step = 5)
+                    color3 = gr.Textbox(color3_, label = "Text Color")
 
             with gr.Row():
-                with gr.Column():       # ----按钮控件------
-                    pre_img_bt = gr.Button("预览")
-                    record_template = gr.Button("导出模板")
-                    mt_name = gr.Textbox("模板_v1",label="导出模板必填名字")
+                with gr.Column():       # ----Button Controls------
+                    pre_img_bt = gr.Button("Preview")
+                    record_template = gr.Button("Export Template")
+                    mt_name = gr.Textbox("Template_v1",label="Template Name (required for export)")
                     # font_txt = gr.Dropdown(choices = font_list, label = "文本字体", value = "fonts/simsun.ttc")
-                    mt_selected = gr.Dropdown(choices = templates_name, label = "选择模板载入")
-                    load_mt = gr.Button("载入模板参数")
+                    mt_selected = gr.Dropdown(choices = templates_name, label = "Select Template to Load")
+                    load_mt = gr.Button("Load Template Parameters")
                 # submit = gr.Button("生成")
                 # account_fn = gr.Dropdown(choices=cookie_fns, label = "账号选择", value = "抖音广东人事考试")
                 # with gr.Column():
-                pre_img2 = gr.Image(label="生成结果预览", interactive=False)
+                pre_img2 = gr.Image(label="Generated Result Preview", interactive=False)
                 with gr.Row():
                     gallery = gr.Gallery(
                         value = preview_templates,
-                        label="preview", show_label=True, elem_id="gallery"
+                        label="Preview", show_label=True, elem_id="gallery"
                         ).style(columns=[3], rows=[2], object_fit="contain", height="auto")
             
                     # mv_files = gr.Files(movies, label="movies")
                     # img_files = gr.Files(imgs_cur, label="movie_imgs")
 
-        with gr.TabItem("生成&发布"):
+        with gr.TabItem("Generate & Publish"):
             gr.Markdown(f"{description}")
-            with gr.Row():       # 行排列        
-                with gr.Column():    # 列排列
-                    title1 = gr.Textbox("朝天区2023招聘事业单位工作人员公告",label="标题")
+            with gr.Row():       # Row arrangement        
+                with gr.Column():    # Column arrangement
+                    title1 = gr.Textbox("Chaoyang District 2023 Recruitment of Public Institution Personnel Announcement",label="Title")
                     a1 = gr.Textbox("xxxx",label="a")
-                    b1 = gr.Textbox(lines=2, value = "报名时间。2023年3月10日至3月17日24:00。", label="b")
-                    c1 = gr.Textbox(lines=2, value = "缴费时间。2023年05月27日 ", label="c")
-                    d1 = gr.Textbox(lines=2, value = "子标题1。笔试分别于2023年4月8日", label="d")
-                    e1 = gr.Textbox(lines=2, value = "子标题2。广元人事考试网打印本人准考证。", label="e")
-                    f1 = gr.Textbox(lines=2, value =  "子标题3。 见准考证。", label="f")
+                    b1 = gr.Textbox(lines=2, value = "Registration Time. March 10, 2023 to March 17, 2023, 24:00.", label="b")
+                    c1 = gr.Textbox(lines=2, value = "Payment Time. May 27, 2023", label="c")
+                    d1 = gr.Textbox(lines=2, value = "Subtitle 1. Written Examination will be held on April 8, 2023", label="d")
+                    e1 = gr.Textbox(lines=2, value = "Subtitle 2. Print your admission ticket from the Guangyuan Personnel Examination Website.", label="e")
+                    f1 = gr.Textbox(lines=2, value =  "Subtitle 3. See Admission Ticket.", label="f")
                     
                 with gr.Column():
-                    # 上传做好的图进行生成
-                    input_image_2 = gr.Image(background_img, label = "背景图， input",interactive=True)
+                    # Upload the finished image to generate
+                    input_image_2 = gr.Image(background_img, label = "Background Image Input",interactive=True)
                     
             with gr.Row():
-                with gr.Column():       # ----按钮控件------
-                    post_img_bt = gr.Button("test_post")
-                    refresh_template_bt = gr.Button("刷新模板")
+                with gr.Column():       # ----Button Controls------
+                    post_img_bt = gr.Button("Test Publish")
+                    refresh_template_bt = gr.Button("Refresh Templates")
                     # mt_name = gr.Textbox("模板_v1",label="导出模板必填名字")
-                    mt_name_selected = gr.Dropdown(choices = templates_name, label = "选择模板进行生产")
+                    mt_name_selected = gr.Dropdown(choices = templates_name, label = "Select Template for Generation")
                 # pre_img2 = gr.Image(label="生成结果预览", interactive=False)
 
-        with gr.TabItem("todo内嵌浏览器pyqt html"):
+        with gr.TabItem("Todo Embedded Browser PyQt Html"):
             mp = gr.HTML(html, elem_id="coords", visible=True)
             pass
             
@@ -420,7 +419,7 @@ with gr.Blocks() as demo:
     
     # refresh_template_bt.click(fn=refresh_template, inputs=None, outputs=[templates_name])
     # template_params = []
-    # post_img_bt.click(inputs = [title, a,b,c,d,e,f])  # 用于追加模板参数，简洁版本
+    # post_img_bt.click(inputs = [title, a,b,c,d,e,f])  # Used to append template parameters, concise version
     # submit.click(fn=generate_mv, inputs=[title, a,b,c,d], 
     #              outputs=[img_files])
                  # outputs=[movie_file, img_files])
@@ -428,10 +427,10 @@ with gr.Blocks() as demo:
     # login_.click(fn=loginDouyin, outputs=[login_qr])
     # login_save.click(fn=run_save_cookie, inputs = [account_name_new])
     # post_.click(fn=mySendDouyin, inputs = [account_fn, movie_file])
-    # 绑定clear点击函数
+    # Bind clear click function
     # clear.click(fn=clear_input, inputs=[], outputs=[context, question, answer, score])
 
 
 if __name__ == "__main__":
     demo.queue().launch()
-    print("run from current ")
+    print("Run from current")
