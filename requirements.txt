@@ -1,0 +1,9 @@
+helium
+pandas
+faker
+bs4
+cpca
+selenium
+transformers
+moviepy
+pillow
