@@ -8,17 +8,17 @@ import textwrap
 import traceback
 
 # Crawler-------------
-# from save_cookie import save_cookie, get_cookie, cookie_f
-# from scrap_util import getDriver, titleLocInfo, find_key_paragrap, extract_from_driver, table_record_doc
+from save_cookie import save_cookie, get_cookie, cookie_f
+from scrap_util import getDriver, titleLocInfo, find_key_paragrap, extract_from_driver, table_record_doc
 import helium as hm
-# from postDouyin import senDouyin
+from postDouyin import senDouyin
 # Model-------------
 from transformers import *
 
 import pandas as pd
 import os
 import random
-# import IPython.display as ipd
+import IPython.display as ipd
 import numpy as np
 # Video-------------
 import moviepy.video.io.ImageSequenceClip
@@ -32,13 +32,13 @@ from txtImgPost import  myPost, reshape_texts, generatePost
 
 VIPtitle = "👑Content Input to Video Generation✍️👒"
 print(f"&gt;&gt;&gt;{VIPtitle}")
-# print(f"Secret Key File Path:{cookie_f}")
+print(f"Secret Key File Path:{cookie_f}")
 mv_path = "./movie_output"
 img_path = "./imgpost"
 font_path = "./fonts"
-# movies = [os.path.join(mv_path,i) for i in os.listdir(mv_path) if i.endswith("mp4")]
-# exam_video = movies[0]
-# imgs_cur = [os.path.join(img_path,i) for i in os.listdir(mv_path) if i.endswith("png")]
+movies = [os.path.join(mv_path,i) for i in os.listdir(mv_path) if i.endswith("mp4")]
+exam_video = movies[0]
+imgs_cur = [os.path.join(img_path,i) for i in os.listdir(mv_path) if i.endswith("png")]
 templates_path = "./templates/"
 templates = [os.path.join(templates_path,i) for i in os.listdir(templates_path) if i.endswith("csv")]
 templates_name = [i.strip(templates_path).strip(".csv") for i in templates]
@@ -53,17 +53,17 @@ WIDTH = 900
 HEIGHT = 1400
 WIDTH,HEIGHT = a_.size
 
-# should load from files and build new from file
-# cookie_fns = ["Douyin Beijing Personnel Examination","Douyin Guangdong Personnel Examination","Douyin Sichuan Personnel Examination","Douyin Zhejiang Personnel Examination","Douyin Jiangsu Personnel Examination","Douyin Shandong Personnel Examination","Douyin Henan Personnel Examination"]
-# cookie_fns = os.listdir("./cookie_list/")
-# cookie_fn = cookie_fns[0]
+should load from files and build new from file
+cookie_fns = ["Douyin Beijing Personnel Examination","Douyin Guangdong Personnel Examination","Douyin Sichuan Personnel Examination","Douyin Zhejiang Personnel Examination","Douyin Jiangsu Personnel Examination","Douyin Shandong Personnel Examination","Douyin Henan Personnel Examination"]
+cookie_fns = os.listdir("./cookie_list/")
+cookie_fn = cookie_fns[0]
 description = "URL--&gt; Crawl--&gt;Parse--&gt; Audio--&gt; Image--&gt; Video"
 
-# driver = getDriver()
-# sub_url ="https://www.js.msa.gov.cn/art/2023/2/24/art_11436_1391666.html"
-# hm.set_driver(driver)  # Give it a selnuim driver
-# hm.go_to(sub_url)
-# html = driver.page_source
+driver = getDriver()
+sub_url ="https://www.js.msa.gov.cn/art/2023/2/24/art_11436_1391666.html"
+hm.set_driver(driver)  # Give it a selnuim driver
+hm.go_to(sub_url)
+html = driver.page_source
 html = ""
 
 examples = [
@@ -76,7 +76,7 @@ examples = [
     ]
 
 # Prediction function
-# qa = pipeline("question-answering", model="uer/roberta-base-chinese-extractive-qa")
+qa = pipeline("question-answering", model="uer/roberta-base-chinese-extractive-qa")
 def custom_predict(context, question):
     answer_result = qa(context=context, question=question)
     answer = question + ": " + answer_result["answer"]
@@ -108,16 +108,16 @@ def generate_image(bac_img, title,a,b,c,d,e,f,   #-- Current number of character
         bac_img = "./kaobianBottem.jpeg"
     bing_post = "bingpost/"
     spacing = 20
-    # imgs_ = os.listdir(bing_post)
-    # imgs_ = [i for i in imgs_ if i.endswith("png")]
-    # ch_img = random.choice(imgs_)
-    # front_img = os.path.join(bing_post, ch_img)    
+    imgs_ = os.listdir(bing_post)
+    imgs_ = [i for i in imgs_ if i.endswith("png")]
+    ch_img = random.choice(imgs_)
+    front_img = os.path.join(bing_post, ch_img)    
     front_img = None      
     postcard=myPost(front_img=front_img, img = bac_img)
     width, height = postcard.get_width_height()
     print(f"width, height :{width}  {height}")
     #  Foreground image, parameters to be opened for control
-    # postcard.drawFrontground() 
+    postcard.drawFrontground() 
     # Place the title  + font size
     spacing=20
     # --Ideal total number of characters per line
@@ -147,9 +147,9 @@ def generate_image(bac_img, title,a,b,c,d,e,f,   #-- Current number of character
         sub_texts = "。".join(lines[1:])
         words = int((width - txt_x) / sz3) - 2
         sub_text = textwrap.wrap(sub_texts, width=words)
-        # sub_text = [i.center(words) for i in sub_text]
+        sub_text = [i.center(words) for i in sub_text]
         # -----Text box effect--------
-        # draw.rectangle((x, y, x + w, y + h), fill=bac_color)
+        draw.rectangle((x, y, x + w, y + h), fill=bac_color)
         postcard.postBoxText([sub_title], font=font_subtt, sz = sz2,
                       x=subtt_x, y=y, color = color2, spacing=spacing,
                 ali = "left" ,bac_color=bac_color)
@@ -195,30 +195,30 @@ def load_template(mt_name):
         print("Error on dealing this template name :", mt_name)
         return None
     template_df = pd.read_csv(template_name)
-    # print(template_df)
-    # return ["font_title", 12, 1, 1, "color1",
-    #     "font_subtt", 12, 123, 1, "color2",
-    #     "font_txt", 123, 12, "color3"]
-    # res = [template_img]
-    # res.extend()
+    print(template_df)
+    return ["font_title", 12, 1, 1, "color1",
+         "font_subtt", 12, 123, 1, "color2",
+         "font_txt", 123, 12, "color3"]
+     res = [template_img]
+     res.extend()
     res = list(template_df.values[0])
     return res
    
-# def change_textbox(choice):
-#     #Update the output control based on different inputs
-#     if choice == "short":
-#         return gr.update(lines=2, visible=True, value="Short story: ")
-#     elif choice == "long":
-#         return gr.update(lines=8, visible=True, value="Long story...")
-#     else:
-#         return gr.update(visible=False)
-# with gr.Blocks() as demo:
-#     radio = gr.Radio(
-#         ["short", "long", "none"], label="Essay Length to Write?"
-#     )
-#     text = gr.Textbox(lines=2, interactive=True)
-#     radio.change(fn=change_textbox, inputs=radio, outputs=text)
-# demo.launch()
+def change_textbox(choice):
+     #Update the output control based on different inputs
+     if choice == "short":
+         return gr.update(lines=2, visible=True, value="Short story: ")
+     elif choice == "long":
+         return gr.update(lines=8, visible=True, value="Long story...")
+     else:
+         return gr.update(visible=False)
+ with gr.Blocks() as demo:
+     radio = gr.Radio(
+         ["short", "long", "none"], label="Essay Length to Write?"
+     )
+     text = gr.Textbox(lines=2, interactive=True)
+     radio.change(fn=change_textbox, inputs=radio, outputs=text)
+ demo.launch()
 
     
 key_index =  ["bm_sj","fee_sj","ks_sj","zkz_sj"]
@@ -280,17 +280,17 @@ def exit_func():
     time.sleep(3)
     exit(1)
 
-# def refresh_template():
-#     global templates_name
-#     templates_name = [i.strip(templates_path).strip(".csv") for i in templates]
-#     return templates_name
+ def refresh_template():
+     global templates_name
+     templates_name = [i.strip(templates_path).strip(".csv") for i in templates]
+     return templates_name
     
 # Login Douyin
 def loginDouyin():
     url = 'https://creator.douyin.com/'
     hm.set_driver(driver)  # Give it a selnuim driver
     hm.go_to(url)
-    # driver.get_screenshot_as_file("1.png")
+    driver.get_screenshot_as_file("1.png")
     print("-------------------Please scan the QR code to log in to the Douyin Creator Center-------------------")
     hm.click(hm.Text("Log In"))
     time.sleep(1)
@@ -360,9 +360,9 @@ with gr.Blocks() as demo:
                     # font_txt = gr.Dropdown(choices = font_list, label = "文本字体", value = "fonts/simsun.ttc")
                     mt_selected = gr.Dropdown(choices = templates_name, label = "Select Template to Load")
                     load_mt = gr.Button("Load Template Parameters")
-                # submit = gr.Button("生成")
-                # account_fn = gr.Dropdown(choices=cookie_fns, label = "账号选择", value = "抖音广东人事考试")
-                # with gr.Column():
+                 submit = gr.Button("生成")
+                 account_fn = gr.Dropdown(choices=cookie_fns, label = "账号选择", value = "抖音广东人事考试")
+                 with gr.Column():
                 pre_img2 = gr.Image(label="Generated Result Preview", interactive=False)
                 with gr.Row():
                     gallery = gr.Gallery(
@@ -370,8 +370,8 @@ with gr.Blocks() as demo:
                         label="Preview", show_label=True, elem_id="gallery"
                         ).style(columns=[3], rows=[2], object_fit="contain", height="auto")
             
-                    # mv_files = gr.Files(movies, label="movies")
-                    # img_files = gr.Files(imgs_cur, label="movie_imgs")
+                     mv_files = gr.Files(movies, label="movies")
+                     img_files = gr.Files(imgs_cur, label="movie_imgs")
 
         with gr.TabItem("Generate & Publish"):
             gr.Markdown(f"{description}")
@@ -417,18 +417,18 @@ with gr.Blocks() as demo:
                    font_subtt, sz2, subtt_x, subtt_y, color2,
                    font_txt,   sz3, txt_x,  color3, bac_color])
     
-    # refresh_template_bt.click(fn=refresh_template, inputs=None, outputs=[templates_name])
-    # template_params = []
-    # post_img_bt.click(inputs = [title, a,b,c,d,e,f])  # Used to append template parameters, concise version
-    # submit.click(fn=generate_mv, inputs=[title, a,b,c,d], 
-    #              outputs=[img_files])
-                 # outputs=[movie_file, img_files])
-    # exit_.click(fn=exit_func)
-    # login_.click(fn=loginDouyin, outputs=[login_qr])
-    # login_save.click(fn=run_save_cookie, inputs = [account_name_new])
-    # post_.click(fn=mySendDouyin, inputs = [account_fn, movie_file])
-    # Bind clear click function
-    # clear.click(fn=clear_input, inputs=[], outputs=[context, question, answer, score])
+     refresh_template_bt.click(fn=refresh_template, inputs=None, outputs=[templates_name])
+     template_params = []
+     post_img_bt.click(inputs = [title, a,b,c,d,e,f])  # Used to append template parameters, concise version
+     submit.click(fn=generate_mv, inputs=[title, a,b,c,d], 
+                  outputs=[img_files])
+                  outputs=[movie_file, img_files])
+     exit_.click(fn=exit_func)
+     login_.click(fn=loginDouyin, outputs=[login_qr])
+     login_save.click(fn=run_save_cookie, inputs = [account_name_new])
+     post_.click(fn=mySendDouyin, inputs = [account_fn, movie_file])
+     Bind clear click function
+     clear.click(fn=clear_input, inputs=[], outputs=[context, question, answer, score])
 
 
 if __name__ == "__main__":
